@@ -1,0 +1,112 @@
+<div class="card-body p-5">
+    <h1 class="fs-4 card-title fw-bold mb-4">Register</h1>
+    <div id="responsesPlace">
+        <!--no responses-->
+    </div>
+    <form method="POST" id="registration" autocomplete="off">
+        <!--username-->
+        <div class="form-floating">
+            <input type="text" class="form-control" id="username" placeholder="Username here..."
+                placeholder="Username here..." required="" autofocus="">
+            <label for="floatingInput">Username</label>
+        </div>
+        <div class="inputError text-danger" id="username_error"></div>
+
+        <!--email-->
+        <div class="form-floating">
+            <input type="email" class="form-control" id="email" placeholder="E-mail here..." required="" autofocus="">
+            <label for="floatingInput">Email address</label>
+        </div>
+        <div class="inputError text-danger" id="email_error"></div>
+
+        <!--password-->
+        <div class="form-floating">
+            <input type="password" class="form-control" id="password" minlength="8" maxlength="18"
+                placeholder="Password">
+            <label for="password">Password</label>
+        </div>
+        <div class="inputError text-danger" id="password_error"></div>
+
+        <!--repeat password-->
+        <div class="form-floating">
+            <input type="password" class="form-control" id="confirm_password" minlength="8" maxlength="18"
+                placeholder="Repeat password">
+            <label for="confirm_password">Repeat password</label>
+        </div>
+        <div class="inputError text-danger" id="confirm_password_error"></div>
+
+        <!--confirm anyway-->
+        <p class="form-text text-muted mb-2">
+            By registering you agree with our terms and condition.
+        </p>
+
+        <div class="align-items-center d-flex">
+            <button type="submit" class="btn btn-success ms-auto" id="real_submit">Register</button>
+            <button type="button" class="btn btn-success ms-auto hide" id="submit_loader" disabled><span
+                    class="spinner-border spinner-border-sm me-2"></span>Please wait..</button>
+        </div>
+    </form>
+</div>
+
+
+
+<script>
+const username = $('#username');
+const email = $('#email');
+const password = $('#password');
+const confirm_password = $('#confirm_password');
+
+$(document).on('submit', '#registration', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    let validate = new Validator({
+        '#username': {
+            'min': 4,
+            'max': 30,
+            'required': 1
+        },
+        '#email': {
+            'email': 'email'
+        },
+        '#password': {
+            'min': 8,
+            'max': 30,
+            'required': 'required'
+        },
+        '#confirm_password': {
+            'required': 'required',
+            'confirm_password': '#password'
+        }
+    });
+
+    // add or remove error messages and classes auto
+    validate.autoset({
+        'input_invalid': 'invalidInput',
+        'input_valid': 'validInput',
+        'prefixes': true
+    });
+
+    if (validate.passed()) {
+        let username_value = username.val().trim();
+        let email_value = email.val().trim();
+        let password_value = password.val().trim();
+        let confirm_password_value = confirm_password.val().trim();
+
+        $.ajax({
+            type: "post",
+            url: "endpoint here",
+            data: {
+                username: username_value,
+                email: email_value,
+                password: password_value,
+                confirm_password: confirm_password_value
+            },
+            success: function(response, status) {
+                var responsOut = JSON.parse(JSON.stringify(response));
+                validate.errorsBack(responsOut.errors);
+            }
+        });
+    }
+});
+</script>
